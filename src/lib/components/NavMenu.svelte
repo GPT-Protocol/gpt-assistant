@@ -2,7 +2,7 @@
     import { base } from "$app/paths";
     import { createEventDispatcher } from "svelte";
     import Logo from "$lib/components/icons/Logo.svelte";
-    import { PUBLIC_ORIGIN } from "$env/static/public";
+    import { PUBLIC_GPT_CONTRACT_ADDRESS, PUBLIC_ORIGIN } from "$env/static/public";
     import NavConversationItem from "./NavConversationItem.svelte";
     import { ethers } from 'ethers';
     import { onMount } from 'svelte';
@@ -24,7 +24,6 @@
     let balance: string | null = null;
     let isConnected = false;
 
-    const GPT_CONTRACT_ADDRESS = "0xC3d2675aE844aB277536402c478031770071d9e4";
     const CONNECTION_STATE_KEY = 'walletConnectionState';
 
     async function setup(accounts: string[]) {
@@ -35,7 +34,7 @@
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             network = await provider.getNetwork();
 
-            const gptContract = new ethers.Contract(GPT_CONTRACT_ADDRESS, GPT_ABI, provider);
+            const gptContract = new ethers.Contract(PUBLIC_GPT_CONTRACT_ADDRESS, GPT_ABI, provider);
             const rawBalance = await gptContract.balanceOf(userAddress);
             const gptBalance = ethers.utils.formatUnits(rawBalance, 18);
 

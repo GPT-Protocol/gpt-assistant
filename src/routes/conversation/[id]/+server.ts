@@ -122,6 +122,9 @@ export async function POST({ request, fetch, locals, params, getClientAddress })
 		];
 	})() satisfies Message[];
 
+	const conversationTitle = (
+		conv.title?.startsWith("Untitled") ? await summarize(newPrompt) : conv.title
+	) as string;
 	// we now build the stream
 	const stream = new ReadableStream({
 		async start(controller) {
@@ -200,7 +203,7 @@ export async function POST({ request, fetch, locals, params, getClientAddress })
 						{
 							$set: {
 								messages,
-								title: (await summarize(newPrompt)) ?? conv.title,
+								title: conversationTitle,
 								updatedAt: new Date(),
 							},
 						}
@@ -283,7 +286,7 @@ export async function POST({ request, fetch, locals, params, getClientAddress })
 				{
 					$set: {
 						messages,
-						title: (await summarize(newPrompt)) ?? conv.title,
+						title: conversationTitle,
 						updatedAt: new Date(),
 					},
 				}

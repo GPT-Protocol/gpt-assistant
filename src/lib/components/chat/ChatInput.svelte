@@ -3,6 +3,7 @@
   import { ethers } from 'ethers';
   import contractAbi from '../../contracts/gpt.json';
   import { writable } from 'svelte/store';
+	import { PUBLIC_GPT_CONTRACT_ADDRESS } from "$env/static/public";
 
   export let value = "";
   export let minRows = 1;
@@ -88,7 +89,7 @@
       if (typeof window.ethereum !== 'undefined') {
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         const account = accounts[0];
-        const contractAddress = '0xC3d2675aE844aB277536402c478031770071d9e4';
+        const contractAddress = PUBLIC_GPT_CONTRACT_ADDRESS;
         const tokenBalance = await checkTokenBalance(account, contractAddress);
         const formattedTokenBalance = ethers.utils.formatUnits(tokenBalance, 18);
         const credits = linearRegressionSlope * formattedTokenBalance + linearRegressionIntercept;
