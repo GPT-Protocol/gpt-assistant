@@ -1,4 +1,4 @@
-import { COOKIE_NAME, MESSAGES_BEFORE_LOGIN } from "$env/static/private";
+import { COOKIE_NAME, FRONTEND_URL, MESSAGES_BEFORE_LOGIN } from "$env/static/private";
 import type { Handle } from "@sveltejs/kit";
 import {
 	PUBLIC_GOOGLE_ANALYTICS_ID,
@@ -10,7 +10,34 @@ import { base } from "$app/paths";
 import { refreshSessionCookie, requiresUser } from "$lib/server/auth";
 import { ERROR_MESSAGES } from "$lib/stores/errors";
 
+const allowedOrigin = FRONTEND_URL;
+
 export const handle: Handle = async ({ event, resolve }) => {
+	const origin = event.url.origin;
+
+	const createPreflightResponse = () =>
+		new Response(null, {
+			status: 204,
+			headers: {
+				"Access-Control-Allow-Origin": allowedOrigin,
+				"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+				"Access-Control-Allow-Headers": "Content-Type, Authorization",
+				"Access-Control-Allow-Credentials": "true",
+			},
+		});
+
+	// Handle preflight requests
+	if (event.request.method === "OPTIONS") {
+		// Check if the Origin is allowed
+		if (origin === allowedOrigin) {
+			return createPreflightResponse();
+		} else {
+			// If the Origin is not allowed, return a 403 Forbidden response
+			console.log("LOOOOLL");
+			return new Response("Forbidden", { status: 403 });
+		}
+	}
+
 	const token = event.cookies.get(COOKIE_NAME);
 
 	event.locals.sessionId = token || crypto.randomUUID();
@@ -106,5 +133,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 		},
 	});
 
+	response.headers.set("Access-Control-Allow-Origin", allowedOrigin);
+	response.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+	response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+	response.headers.set("Access-Control-Allow-Credentials", "true");
 	return response;
 };

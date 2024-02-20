@@ -10,7 +10,7 @@ export async function GET({ params, locals }) {
 
 	const conv = await collections.conversations.findOne({
 		_id: convId,
-		...authCondition(locals),
+		//...authCondition(locals),
 	});
 
 	if (!conv) {

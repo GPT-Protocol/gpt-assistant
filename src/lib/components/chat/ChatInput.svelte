@@ -4,6 +4,8 @@
   import contractAbi from '../../contracts/gpt.json';
   import { writable } from 'svelte/store';
 	import { PUBLIC_GPT_CONTRACT_ADDRESS } from "$env/static/public";
+	import { activeAccount } from "$lib/stores/currentAccount";
+	import { base } from "$app/paths";
 
   export let value = "";
   export let minRows = 1;
@@ -57,6 +59,8 @@
         // Request access to the user's MetaMask accounts
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         const account = accounts[0];
+        activeAccount.set(account);
+        document.cookie = `walletAddress=${account}; path=/; Secure; SameSite=Lax`;
         provider = new ethers.providers.Web3Provider(window.ethereum);
         signer = provider.getSigner();
         // You can perform additional operations after connecting to MetaMask
@@ -75,10 +79,13 @@
       window.ethereum.on("accountsChanged", (accounts: string[]) => {
         if (accounts.length === 0) {
           // User has logged out, reload the page
-          window.location.reload();
+          window.location.href = base;
         } else {
           const account = accounts[0];
+          document.cookie = `walletAddress=${account}; path=/; Secure; SameSite=Lax`;
+          activeAccount.set(account)
           checkAvailableCredits(account);
+          window.location.href = base;
         }
       });
     }

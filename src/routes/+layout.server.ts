@@ -7,8 +7,9 @@ import { defaultModel, models, oldModels, validateModel } from "$lib/server/mode
 import { authCondition, requiresUser } from "$lib/server/auth";
 import { DEFAULT_SETTINGS } from "$lib/types/Settings";
 import { SERPAPI_KEY, SERPER_API_KEY, MESSAGES_BEFORE_LOGIN } from "$env/static/private";
+import cookie from "cookie"
 
-export const load: LayoutServerLoad = async ({ locals, depends, url }) => {
+export const load: LayoutServerLoad = async ({ request, locals, depends, url }) => {
 	const { conversations } = collections;
 	const urlModel = url.searchParams.get("model");
 
@@ -38,9 +39,11 @@ export const load: LayoutServerLoad = async ({ locals, depends, url }) => {
 		});
 	}
 
+	const cookies = cookie.parse(request.headers.get('cookie') || '');
+	const walletAddress = cookies.walletAddress;
 	return {
 		conversations: await conversations
-			.find(authCondition(locals))
+			.find({userAddress: walletAddress})
 			.sort({ updatedAt: -1 })
 			.project<Pick<Conversation, "title" | "model" | "_id" | "updatedAt" | "createdAt">>({
 				title: 1,

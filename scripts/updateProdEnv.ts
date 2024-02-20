@@ -6,6 +6,7 @@ const SERPER_API_KEY = process.env.SERPER_API_KEY;
 const OPENID_CONFIG = process.env.OPENID_CONFIG;
 const MONGODB_URL = process.env.MONGODB_URL;
 const HF_ACCESS_TOKEN = process.env.HF_ACCESS_TOKEN; // token used for API requests in prod
+const FRONTEND_URL = process.env.FRONTEND_URL
 
 // Read the content of the file .env.template
 const PUBLIC_CONFIG = fs.readFileSync(".env.template", "utf8");
@@ -16,6 +17,7 @@ MONGODB_URL=${MONGODB_URL}
 OPENID_CONFIG=${OPENID_CONFIG}
 SERPER_API_KEY=${SERPER_API_KEY}
 HF_ACCESS_TOKEN=${HF_ACCESS_TOKEN}
+FRONTEND_URL=${FRONTEND_URL}
 `;
 
 // Make an HTTP POST request to add the space secrets
