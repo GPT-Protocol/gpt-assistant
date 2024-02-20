@@ -8,6 +8,7 @@ export interface Conversation extends Timestamps {
 
 	sessionId?: string;
 	userId?: User["_id"];
+	userAddress: string;
 
 	model: string;
 

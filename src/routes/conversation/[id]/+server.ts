@@ -286,7 +286,6 @@ export async function POST({ request, fetch, locals, params, getClientAddress })
 				{
 					$set: {
 						messages,
-						title: conversationTitle,
 						updatedAt: new Date(),
 					},
 				}
@@ -303,7 +302,7 @@ export async function DELETE({ locals, params }) {
 
 	const conv = await collections.conversations.findOne({
 		_id: convId,
-		...authCondition(locals),
+		//...authCondition(locals),
 	});
 
 	if (!conv) {
@@ -324,7 +323,7 @@ export async function PATCH({ request, locals, params }) {
 
 	const conv = await collections.conversations.findOne({
 		_id: convId,
-		...authCondition(locals),
+		//...authCondition(locals),
 	});
 
 	if (!conv) {

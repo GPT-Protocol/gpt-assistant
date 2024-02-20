@@ -18,6 +18,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		.object({
 			fromShare: z.string().optional(),
 			model: validateModel(models),
+			userAddress: z.string().optional()
 		})
 		.parse(JSON.parse(body));
 
@@ -41,6 +42,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 			title ||
 			"Untitled " + ((await collections.conversations.countDocuments(authCondition(locals))) + 1),
 		messages,
+		userAddress: values.userAddress,
 		model: values.model,
 		createdAt: new Date(),
 		updatedAt: new Date(),

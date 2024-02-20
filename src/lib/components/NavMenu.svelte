@@ -8,6 +8,7 @@
     import { onMount } from 'svelte';
     import { truncateAddress } from './helpers';
     import GPT_ABI from '../contracts/gpt.json';
+	import { activeAccount } from "$lib/stores/currentAccount";
 
     const dispatch = createEventDispatcher<{
         shareConversation: { id: string; title: string };
@@ -28,6 +29,8 @@
 
     async function setup(accounts: string[]) {
         userAddress = accounts[0];
+        activeAccount.set(userAddress);
+        document.cookie = `walletAddress=${userAddress}; path=/; Secure; SameSite=Lax`;
         const previouslyConnected = localStorage.getItem(CONNECTION_STATE_KEY) === 'connected';
         
         try {
@@ -75,6 +78,8 @@
                 await setup(accounts);
             } else if (previouslyConnected) {
                 localStorage.removeItem(CONNECTION_STATE_KEY);
+                document.cookie = ""
+                activeAccount.set("")
                 window.location.reload();
             }
         } catch (e) {
